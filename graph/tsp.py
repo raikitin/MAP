@@ -1,16 +1,9 @@
 import itertools
-
 from graph import *
 from mst import kruskal, prim, prim_optimized
-# ==========================================
-# TSP TEIL 1: HEURISTIKEN
-# ==========================================
 
 def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
-    """
-    Berechnet eine TSP-Tour mit der Nächster-Nachbar-Heuristik.
-    Gibt ein Tuple zurück: (Gesamtlänge der Tour, Liste der besuchten Knoten)
-    """
+
     nodes = list(graph.get_nodes())
     if not nodes:
         return 0.0, []
@@ -49,10 +42,7 @@ def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int
 
 
 def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
-    """
-    Berechnet eine TSP-Tour mit der Doppelter-Baum-Heuristik.
-    Nutzt den Algorithmus von Prim für den MST.
-    """
+
     # MST berechnen
     _, mst_edges = prim_optimized(graph, start_node)
     
@@ -91,11 +81,9 @@ def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
         
     return total_distance, tour
 
-# ==========================================
-# HILFSFUNKTION FÜR TSP (EXAKT)
-# ==========================================
+
 def _build_dist_matrix(graph: Graph) -> Tuple[List[List[float]], int]:
-    """Wandelt den Graphen für O(1) Zugriffszeiten intern in eine Matrix um."""
+
     nodes = list(graph.get_nodes())
     n = len(nodes)
     matrix = [[float('inf')] * n for _ in range(n)]
@@ -106,15 +94,9 @@ def _build_dist_matrix(graph: Graph) -> Tuple[List[List[float]], int]:
             
     return matrix, n
 
-# ==========================================
-# TSP TEIL 2: EXAKTE VERFAHREN
-# ==========================================
 
 def tsp_brute_force(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
-    """
-    Vollständige Suche (Brute Force) über alle möglichen Permutationen.
-    Laufzeit: O(V!) -> Nur für V <= 11 nutzbar!
-    """
+
     matrix, n = _build_dist_matrix(graph)
     
     other_nodes = [i for i in range(n) if i != start_node]
@@ -150,8 +132,8 @@ def tsp_brute_force(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]
 
 def tsp_branch_and_bound(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
     """
-    Branch & Bound Algorithmus (Exakt).
-    Schneidet schlechte Pfade frühzeitig ab (Pruning).
+    Branch & Bound Algorithmus 
+    Schneidet schlechte Pfade frühzeitig ab (Pruning)
     """
     matrix, n = _build_dist_matrix(graph)
     

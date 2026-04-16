@@ -6,7 +6,7 @@ from collections import deque
 class Graph(ABC):
     
     @abstractmethod
-    def add_edge(self, u: int, v: int, weight: float = 1.0) -> None:
+    def add_edge(self, u: int, v: int, weight: float = 0.0) -> None:
         pass
 
     @abstractmethod
@@ -92,7 +92,7 @@ def load_graph_fast(filepath: str, graph_class, directed: bool = False, weighted
             for line in file_iter:
                 parts = line.split()
                 if parts:
-                    add_edge(int(parts[0]), int(parts[1]), 1.0)
+                    add_edge(int(parts[0]), int(parts[1]), 0.0)
                     
     return graph
 

@@ -7,8 +7,7 @@ from typing import List, Tuple
 # https://medium.com/@conniezhou678/mastering-dara-algorithm-part-28-understanding-union-find-in-python-155da9e04ccb
 # ==========================================
 class UnionFind:
-    """Implementierung einer Union-Find-Datenstruktur (Disjoint Set) 
-    mit Path Compression und Union by Rank für O(α(V)) Laufzeit."""
+
     def __init__(self, n: int):
         self.parent = list(range(n))
         self.rank = [0] * n
@@ -35,14 +34,9 @@ class UnionFind:
             return True
         return False # Knoten waren bereits in derselben Menge (bilden einen Kreis)
 
-# ==========================================
-# MST ALGORITHMEN
-# ==========================================
+
 def kruskal(graph: Graph) -> Tuple[float, List[Tuple[int, int, float]]]:
-    """
-    Berechnet den MST mit dem Algorithmus von Kruskal.
-    Gibt ein Tuple zurück: (Gesamtgewicht, Liste der MST-Kanten)
-    """
+
     edges = []
     nodes = list(graph.get_nodes())
     if not nodes:
@@ -76,10 +70,7 @@ def kruskal(graph: Graph) -> Tuple[float, List[Tuple[int, int, float]]]:
 
 
 def prim(graph: Graph, start_node: int = 0) -> Tuple[float, List[Tuple[int, int, float]]]:
-    """
-    Berechnet den MST mit dem Algorithmus von Prim.
-    Gibt ein Tuple zurück: (Gesamtgewicht, Liste der MST-Kanten)
-    """
+
     nodes = list(graph.get_nodes())
     if not nodes:
         return 0.0, []
