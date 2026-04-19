@@ -6,9 +6,7 @@ from mst import *
 from tsp import *
 
 def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_bfs: bool, run_mst: bool, run_tsp: bool, run_tsp_exact: bool):
-    """
-    Führt ausgewählte Algorithmen auf den übergebenen Dateien aus.
-    """
+    
     print(f"{'='*60}")
     print(f"{'GRAPHEN-PRAKTIKUM: BENCHMARKING':^60}")
     print(f"{'='*60}\n")
@@ -25,12 +23,14 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
         # ---------------------------------------------------------
         t_start = time.perf_counter()
         graph = load_graph_fast(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
+        # graph = load_graph(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
         t_end = time.perf_counter()
 
         if run_tsp_exact:
             graph = load_graph_fast(filepath, AdjacencyMatrixGraph, directed=is_directed, weighted=is_weighted)
         
-        num_nodes = len(list(graph.get_nodes()))
+        # num_nodes = len(list(graph.get_nodes()))
+        num_nodes = graph.num_nodes
         print(f"Einlesen abgeschlossen in {(t_end - t_start):.4f} s.")
         print(f"-> Knotenanzahl: {num_nodes}")
 
@@ -121,7 +121,7 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
 if __name__ == "__main__":
     
     FILE_SETS = {
-        "basis_tests": [
+        "bfs_tests": [
             "MAP/example/graph/Graph1.txt",
             "MAP/example/graph/Graph2.txt",
             "MAP/example/graph/Graph3.txt",
@@ -149,24 +149,25 @@ if __name__ == "__main__":
             "MAP/example/tsp/K_50.txt",
             "MAP/example/tsp/K_70.txt",
             "MAP/example/tsp/K_100.txt"
-        ],
-        "stresstest": [
-            "graph_1_million_kanten.txt"
         ]
     }
     
     # Auswahl der Testdateien
-    AKTUELLER_TEST = FILE_SETS["tsp_tests"]
+    AKTUELLER_TEST = FILE_SETS["bfs_tests"]
 
     # Auswahl der Algorithmen
     RUN_BFS = True
     RUN_MST = False
     RUN_TSP = False
-    RUN_TSP_EXACT = True
+    RUN_TSP_EXACT = False
+
+    is_weighted = False
+    if RUN_MST or RUN_TSP or RUN_TSP_EXACT:
+        is_weighted = True
     
     t_start_test = time.perf_counter()
     run_benchmarks(
-        is_weighted=True,
+        is_weighted=is_weighted,
         is_directed=False,
         test_files=AKTUELLER_TEST,
         run_bfs=RUN_BFS,

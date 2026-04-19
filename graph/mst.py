@@ -2,10 +2,8 @@ from graph import Graph
 import heapq
 from typing import List, Tuple
 
-# ==========================================
-# HILFSDATENSTRUKTUR FÜR KRUSKAL
+# Hilfsstruktur FÜR Kruskal
 # https://medium.com/@conniezhou678/mastering-dara-algorithm-part-28-understanding-union-find-in-python-155da9e04ccb
-# ==========================================
 class UnionFind:
 
     def __init__(self, n: int):
