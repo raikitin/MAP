@@ -122,42 +122,42 @@ if __name__ == "__main__":
     
     FILE_SETS = {
         "bfs_tests": [
-            "MAP/example/graph/Graph1.txt",
-            "MAP/example/graph/Graph2.txt",
-            "MAP/example/graph/Graph3.txt",
-            "MAP/example/graph/Graph_gross.txt",
-            "MAP/example/graph/Graph_ganzgross.txt",
-            "MAP/example/graph/Graph_ganzganzgross.txt"
+            "example/graph/Graph1.txt",
+            "example/graph/Graph2.txt",
+            "example/graph/Graph3.txt",
+            "example/graph/Graph_gross.txt",
+            "example/graph/Graph_ganzgross.txt",
+            "example/graph/Graph_ganzganzgross.txt"
         ],
         "mst_tests": [
-            "MAP/example/mst/G_1_2.txt",
-            "MAP/example/mst/G_1_20.txt",
-            "MAP/example/mst/G_1_200.txt",
-            "MAP/example/mst/G_10_20.txt",
-            "MAP/example/mst/G_10_200.txt",
-            "MAP/example/mst/G_100_200.txt"
+            "example/mst/G_1_2.txt",
+            "example/mst/G_1_20.txt",
+            "example/mst/G_1_200.txt",
+            "example/mst/G_10_20.txt",
+            "example/mst/G_10_200.txt",
+            "example/mst/G_100_200.txt"
         ],
         "tsp_tests": [
-            "MAP/example/tsp/K_10.txt",
-            "MAP/example/tsp/K_10e.txt",
-            "MAP/example/tsp/K_12.txt",
-            "MAP/example/tsp/K_12e.txt",
-            "MAP/example/tsp/K_15.txt",
-            "MAP/example/tsp/K_15e.txt",
-            "MAP/example/tsp/K_20.txt",
-            "MAP/example/tsp/K_30.txt",
-            "MAP/example/tsp/K_50.txt",
-            "MAP/example/tsp/K_70.txt",
-            "MAP/example/tsp/K_100.txt"
+            "example/tsp/K_10.txt",
+            "example/tsp/K_10e.txt",
+            "example/tsp/K_12.txt",
+            "example/tsp/K_12e.txt",
+            "example/tsp/K_15.txt",
+            "example/tsp/K_15e.txt",
+            "example/tsp/K_20.txt",
+            "example/tsp/K_30.txt",
+            "example/tsp/K_50.txt",
+            "example/tsp/K_70.txt",
+            "example/tsp/K_100.txt"
         ]
     }
     
     # Auswahl der Testdateien
-    AKTUELLER_TEST = FILE_SETS["bfs_tests"]
+    AKTUELLER_TEST = FILE_SETS["mst_tests"]
 
     # Auswahl der Algorithmen
     RUN_BFS = True
-    RUN_MST = False
+    RUN_MST = True
     RUN_TSP = False
     RUN_TSP_EXACT = False
 

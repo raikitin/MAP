@@ -2,7 +2,7 @@ from graph import Graph
 import heapq
 from typing import List, Tuple
 
-# Hilfsstruktur FÜR Kruskal
+# Hilfsstruktur für Kruskal
 # https://medium.com/@conniezhou678/mastering-dara-algorithm-part-28-understanding-union-find-in-python-155da9e04ccb
 class UnionFind:
 
@@ -53,6 +53,7 @@ def kruskal(graph: Graph) -> Tuple[float, List[Tuple[int, int, float]]]:
     
     mst_edges = []
     total_weight = 0.0
+    
     
     # Kanten durchgehen und zum MST hinzufügen, wenn sie keinen Kreis bilden
     for weight, u, v in edges:
@@ -112,7 +113,7 @@ def prim_optimized(graph: Graph, start_node: int = 0) -> Tuple[float, List[Tuple
     mst_edges = []
     total_weight = 0.0
     
-    # Priority Queue (Min-Heap) mit (Gewicht, Herkunftsknoten, Zielknoten)
+    # Priority Queue (Min-Heap) mit (Gewicht, Startknoten, Zielknoten)
     min_heap = []
     
     for v, weight in get_neighbors(start_node):
