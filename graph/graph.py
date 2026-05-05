@@ -63,7 +63,12 @@ class AdjacencyMatrixGraph(Graph):
         self.num_nodes = num_nodes
         self._directed = directed
         self._weighted = weighted
-        self.matrix = [[None for _ in range(num_nodes)] for _ in range(num_nodes)]
+        # Änderung von NONE zu float('inf') für unverbundene Knoten
+        self.matrix = [[float('inf') for _ in range(num_nodes)] for _ in range(num_nodes)]
+        
+        # Diagonale: Distanz von Knoten zu sich selbst 
+        for i in range(num_nodes):
+            self.matrix[i][i] = 0.0
 
     @property
     def is_directed(self) -> bool:
@@ -81,7 +86,7 @@ class AdjacencyMatrixGraph(Graph):
     def get_neighbors(self, u: int) -> Iterable[Tuple[int, float]]:
         for v in range(self.num_nodes):
             weight = self.matrix[u][v]
-            if weight is not None:
+            if weight != float('inf') and u != v:
                 yield (v, weight)
 
     def get_nodes(self) -> Iterable[int]:
