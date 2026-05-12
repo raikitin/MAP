@@ -2,7 +2,6 @@ import itertools
 from graph import *
 from mst import kruskal, prim, prim_optimized
 
-# TODO: Tour ausgabe hinzufügen
 def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
     nodes = list(graph.get_nodes())
@@ -42,7 +41,6 @@ def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int
     return total_distance, tour
 
 
-# TODO: Tour ausgabe hinzufügen
 def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
     # MST berechnen
@@ -134,10 +132,7 @@ def tsp_brute_force(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]
 
 
 def tsp_branch_and_bound(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
-    """
-    Branch & Bound Algorithmus 
-    Schneidet schlechte Pfade frühzeitig ab (Pruning)
-    """
+
     matrix, n = _build_dist_matrix(graph)
     
     best_distance = float('inf')
@@ -233,6 +228,8 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
     if matrix[curr][start_node] != float('inf'):
         best_distance = nn_dist + matrix[curr][start_node]
     
+    # Funktionsaufruf langsamer als inline
+    # best_distance, best_tour = nearest_neighbor(graph, start_node)
     
     # Look Ahead (Minimale ausgehende Kanten)
     min_edges = [float('inf')] * n
@@ -241,8 +238,7 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
             if i != j and matrix[i][j] < min_edges[i]:
                 min_edges[i] = matrix[i][j]
                 
-    # Die initiale optimistische Reststrecke ist die Summe der minimalen 
-    # Kanten aller unbesuchten Knoten (am Anfang alle außer Start)
+    # Best Case restliche Strecke, kommt mindestens noch auf die Tour
     initial_remaining_bound = sum(min_edges) - min_edges[start_node]
 
     visited = [False] * n

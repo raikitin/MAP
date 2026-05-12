@@ -258,8 +258,8 @@ if __name__ == "__main__":
     # Auswahl der Algorithmen
     RUN_BFS = True
     RUN_MST = False
-    RUN_TSP = True
-    RUN_TSP_EXACT = False
+    RUN_TSP = False
+    RUN_TSP_EXACT = True
     RUN_SP = False 
     RUN_MAX_FLOW = False
 
