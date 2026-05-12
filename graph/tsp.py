@@ -2,6 +2,7 @@ import itertools
 from graph import *
 from mst import kruskal, prim, prim_optimized
 
+# TODO: Tour ausgabe hinzufügen
 def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
     nodes = list(graph.get_nodes())
@@ -41,18 +42,19 @@ def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int
     return total_distance, tour
 
 
+# TODO: Tour ausgabe hinzufügen
 def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
     # MST berechnen
     _, mst_edges = prim_optimized(graph, start_node)
     
-    # MST-Kanten zu Adjazenzliste
+    # MST-Kanten zu Adjazenzliste 
     mst_adj = {node: [] for node in graph.get_nodes()}
     for u, v, weight in mst_edges:
         mst_adj[u].append(v)
         mst_adj[v].append(u)
         
-    # DFS auf MST
+    # DFS auf MST (Euler Tour)
     visited = set()
     tour = []
     
@@ -67,6 +69,7 @@ def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
     
     tour.append(start_node)
     
+    # Gewichte zusammen rechnen
     total_distance = 0.0
     for i in range(len(tour) - 1):
         u = tour[i]

@@ -249,18 +249,18 @@ if __name__ == "__main__":
     }
     
     # Auswahl der Testdateien
-    AKTUELLER_TEST = FILE_SETS["sp_tests"]
+    AKTUELLER_TEST = FILE_SETS["tsp_tests"]
 
     # Auswahl der Algorithmen
     RUN_BFS = True
     RUN_MST = False
-    RUN_TSP = False
+    RUN_TSP = True
     RUN_TSP_EXACT = False
-    RUN_SP = True 
+    RUN_SP = False 
     RUN_MAX_FLOW = False
 
     is_weighted = True
-    is_directed=True
+    is_directed=False
     
     t_start_test = time.perf_counter()
     run_benchmarks(
