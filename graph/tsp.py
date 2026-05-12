@@ -209,7 +209,7 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
     best_distance = float('inf')
     best_tour = []
     
-    # INITIALE SCHRANKE (Upper Bound via Nearest-Neighbour)
+    # Initiale Schranke (Upper Bound mit Nearest-Neighbour)
     nn_visited = [False] * n
     nn_visited[start_node] = True
     curr = start_node
@@ -231,7 +231,7 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
         best_distance = nn_dist + matrix[curr][start_node]
     
     
-    # VORBEREITUNG LOOK-AHEAD (Minimale ausgehende Kanten)
+    # Look Ahead (Minimale ausgehende Kanten)
     min_edges = [float('inf')] * n
     for i in range(n):
         for j in range(n):
@@ -242,7 +242,6 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
     # Kanten aller unbesuchten Knoten (am Anfang alle außer Start)
     initial_remaining_bound = sum(min_edges) - min_edges[start_node]
 
-    # REKURSIVE SUCHE MIT PRUNING
     visited = [False] * n
     visited[start_node] = True
     current_path = [start_node]
@@ -250,8 +249,7 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
     def dfs(current_node: int, current_distance: float, depth: int, remaining_bound: float):
         nonlocal best_distance, best_tour
         
-        # Wenn die aktuellen Kosten plus das bestmögliche Restszenario schlechter
-        # sind als unser Rekord, macht es keinen Sinn, hier weiterzusuchen.
+        # Pruning wenn aktuelle Distanz + optimistische Reststrecke >= beste gefundene Distanz
         if current_distance + remaining_bound >= best_distance:
             return
             
@@ -273,8 +271,7 @@ def tsp_branch_and_bound_optimized(graph: AdjacencyMatrixGraph, start_node: int 
                     visited[next_node] = True
                     current_path.append(next_node)
                     
-                    # Wir ziehen die Minimal-Kante des nächsten Knotens aus dem Bound ab,
-                    # da wir diesen Knoten jetzt verbuchen.
+                    # next_node wird verbucht und ist entsprechend nicht mehr in im restlichen Bound enthalten.
                     new_bound = remaining_bound - min_edges[next_node]
                     
                     dfs(next_node, current_distance + weight, depth + 1, new_bound)
