@@ -1,22 +1,18 @@
 import heapq
 from typing import Tuple, List
 
-# def reconstruct_path(parents: List[int], target_node: int) -> List[int]:
-#     """Rekonstruiert den Weg vom Startknoten zum target_node."""
-#     path = []
-#     current = target_node
-#     while current != -1:
-#         path.append(current)
-#         current = parents[current]
+def reconstruct_path(parents: List[int], target_node: int) -> List[int]:
+    path = []
+    current = target_node
+    while current != -1:
+        path.append(current)
+        current = parents[current]
         
-#     path.reverse() # Weil wir vom Ziel rückwärts zum Start gelaufen sind
-#     return path
+    path.reverse() # Weil wir vom Ziel rückwärts zum Start gelaufen sind
+    return path
 
 def dijkstra(graph, start_node: int) -> Tuple[List[float], List[int]]:
-    """
-    Berechnet die kürzesten Wege vom Startknoten zu allen anderen.
-    Erfordert nicht-negative Kantengewichte!
-    """
+
     n = graph.num_nodes
     distances = [float('inf')] * n
     parents = [-1] * n
@@ -29,7 +25,7 @@ def dijkstra(graph, start_node: int) -> Tuple[List[float], List[int]]:
     while pq:
         current_dist, u = heapq.heappop(pq)
         
-        # Lazy Deletion: Wenn es einen besseren Weg zu 'u' gibt, wird der alte Eintrag aus dem Heap geskippt.
+        # Lazy Deletion: Wenn es einen besseren Weg zu 'u' gibt, wird der alte Eintrag aus dem Heap geskippt
         if current_dist > distances[u]:
             continue
             
@@ -48,10 +44,7 @@ def dijkstra(graph, start_node: int) -> Tuple[List[float], List[int]]:
     return distances, parents
 
 def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
-    """
-    Berechnet kürzeste Wege und toleriert negative Kanten.
-    Erkennt negative Zyklen.
-    """
+
     n = getattr(graph, 'num_nodes', len(list(graph.get_nodes())))
     distances = [float('inf')] * n
     parents = [-1] * n
@@ -59,7 +52,7 @@ def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
     distances[start_node] = 0.0
     nodes = list(graph.get_nodes())
     
-    # Phase 1: Relaxiere alle Kanten (V - 1) mal
+    # Relaxiere alle Kanten (V - 1) mal
     for i in range(n - 1):
         changed = False
         for u in nodes:
@@ -72,7 +65,7 @@ def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
                     parents[v] = u
                     changed = True
                     
-        # Early Stopping: Stop wenn sich in diesem Durchlauf nichts geändert hat
+        # Stop wenn sich in dem Durchlauf nichts geändert hat
         if not changed:
             break
             
@@ -84,7 +77,6 @@ def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
     #         if distances[u] + weight < distances[v]:
     #             raise ValueError("Graph enthält einen erreichbaren Zyklus mit negativem Gesamtgewicht!")
             
-    # Phase 2: Prüfe auf negative Zyklen und extrahiere den Pfad
     # Wenn Kanten nochmal entspannt werden können, gibt es einen negativen Kreis.
     cycle_node = -1
     for u in nodes:
@@ -92,21 +84,21 @@ def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
             continue
         for v, weight in graph.get_neighbors(u):
             if distances[u] + weight < distances[v]:
-                # Update parent ein letztes Mal, damit der Zyklus intakt ist
+                # Update parent ein letztes Mal, damit der Zyklus stimmt
                 parents[v] = u
                 cycle_node = v
                 break
         if cycle_node != -1:
             break
 
-    # Wenn wir einen cycle_node gefunden haben, extrahieren wir den Zyklus
+    # cycle_node gefunden
     if cycle_node != -1:
-        # 1. Gehe N Schritte zurück, um garantiert im Zyklus zu landen
+        # N Schritte zurück gehen, um garantiert im Zyklus zu landen
         curr = cycle_node
         for _ in range(n):
             curr = parents[curr]
             
-        # 2. Speichere den Zyklus
+        # Zyklus speichern
         cycle = []
         cycle_start = curr
         while True:
@@ -115,7 +107,7 @@ def bellman_ford(graph, start_node: int) -> Tuple[List[float], List[int]]:
             if curr == cycle_start:
                 break
                 
-        # 3. Den Array umdrehen und den Startknoten anhängen, um den Kreis zu schließen
+        # Array umdrehen und den Startknoten anhängen, um den Kreis zu schließen
         cycle.reverse()
         cycle.append(cycle[0])
         

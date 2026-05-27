@@ -81,7 +81,7 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
                     dist_nn, tour = nearest_neighbor(graph)
                     t_end = time.perf_counter()
                     print(f"[TSP] Nearest-Neighbour Distanz: {dist_nn:.4f} \t| Zeit: {(t_end - t_start):.6f} s")
-                    # print(f"[TSP] Nearest-Neighbour Tour   : {tour}")
+                    print(f"[TSP] Nearest-Neighbour Tour   : {tour}")
                 except Exception as e:
                     print(f"[TSP] Nearest-Neighbour fehlgeschlagen: {e}")
 
@@ -90,7 +90,7 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
                     dist_dt, tour = double_tree(graph)
                     t_end = time.perf_counter()
                     print(f"[TSP] Doppelter-Baum Distanz   : {dist_dt:.4f} \t| Zeit: {(t_end - t_start):.6f} s")
-                    # print(f"[TSP] Doppelter-Baum Tour      : {tour}")
+                    print(f"[TSP] Doppelter-Baum Tour      : {tour}")
                 except Exception as e:
                     print(f"[TSP] Doppelter-Baum fehlgeschlagen: {e}")
 
@@ -138,8 +138,8 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
             tests_for_current_file = [t for t in kontroll_tests if t["file"] == current_filename]
 
             for test in tests_for_current_file:
-                # sp_graph = load_graph_fast(filepath, AdjacencyListGraph, directed=test["directed"], weighted=True)
-                sp_graph = graph
+                sp_graph = load_graph_fast(filepath, AdjacencyListGraph, directed=test["directed"], weighted=True)
+                # sp_graph = graph
                 start_n = test["start"]
                 target_n = test["target"]
 
@@ -149,24 +149,30 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
                 # DIJKSTRA
                 try:
                     t_start = time.perf_counter()
-                    dist_dijkstra, _ = dijkstra(sp_graph, start_n)
+                    dist_dijkstra, parents = dijkstra(sp_graph, start_n)
                     t_end = time.perf_counter()
                     
                     val_d = dist_dijkstra[target_n]
                     str_d = f"{val_d:.5f}".rstrip('0').rstrip('.') if val_d != float('inf') else "Unerreichbar"
                     print(f"[Dijkstra]     : {str_d:^16} | Zeit: {(t_end - t_start):.6f} s")
+                    # Rekonstruiere den Weg
+                    tour = reconstruct_path(parents, target_n)
+                    # print(f"[Dijkstra]     : Tour      : {tour}")
                 except Exception as e:
                     print(f"[Dijkstra]     : Fehlgeschlagen ({e})")
 
                 # BELLMAN-FORD
                 try:
                     t_start = time.perf_counter()
-                    dist_mbf, _ = bellman_ford(sp_graph, start_n)
+                    dist_mbf, parents = bellman_ford(sp_graph, start_n)
                     t_end = time.perf_counter()
                     
                     val_m = dist_mbf[target_n]
                     str_m = f"{val_m:.5f}".rstrip('0').rstrip('.') if val_m != float('inf') else "Unerreichbar"
                     print(f"[Bellman-Ford] : {str_m:^16} | Zeit: {(t_end - t_start):.6f} s")
+                    # Rekonstruiere den Weg
+                    tour = reconstruct_path(parents, target_n)
+                    # print(f"[Bellman-Ford] : Tour      : {tour}")
                 except Exception as e:
                     print(f"[Bellman-Ford] : Fehlgeschlagen ({e})")
                 print("")
@@ -253,18 +259,18 @@ if __name__ == "__main__":
     }
     
     # Auswahl der Testdateien
-    AKTUELLER_TEST = FILE_SETS["tsp_tests"]
+    AKTUELLER_TEST = FILE_SETS["sp_tests"]
 
     # Auswahl der Algorithmen
     RUN_BFS = True
     RUN_MST = False
     RUN_TSP = False
-    RUN_TSP_EXACT = True
-    RUN_SP = False 
+    RUN_TSP_EXACT = False
+    RUN_SP = True 
     RUN_MAX_FLOW = False
 
     is_weighted = True
-    is_directed=False
+    is_directed=True
     
     t_start_test = time.perf_counter()
     run_benchmarks(

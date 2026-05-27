@@ -43,16 +43,15 @@ def nearest_neighbor(graph: Graph, start_node: int = 0) -> Tuple[float, List[int
 
 def double_tree(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
-    # MST berechnen
     _, mst_edges = prim_optimized(graph, start_node)
     
-    # MST-Kanten zu Adjazenzliste 
+    # Double Tree erstellen 
     mst_adj = {node: [] for node in graph.get_nodes()}
     for u, v, weight in mst_edges:
         mst_adj[u].append(v)
         mst_adj[v].append(u)
         
-    # DFS auf MST (Euler Tour)
+    # DFS auf Double Tree (Euler Tour)
     visited = set()
     tour = []
     
@@ -98,7 +97,9 @@ def _build_dist_matrix(graph: Graph) -> Tuple[List[List[float]], int]:
 
 def tsp_brute_force(graph: Graph, start_node: int = 0) -> Tuple[float, List[int]]:
 
-    matrix, n = _build_dist_matrix(graph)
+    # matrix, n = _build_dist_matrix(graph)
+    matrix = graph.matrix
+    n = graph.num_nodes
     
     other_nodes = [i for i in range(n) if i != start_node]
     
