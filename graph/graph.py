@@ -92,6 +92,50 @@ class AdjacencyMatrixGraph(Graph):
     def get_nodes(self) -> Iterable[int]:
         return range(self.num_nodes)
 
+class MinCostFlowGraph:
+    def __init__(self, num_nodes: int):
+        self.num_nodes = num_nodes
+        self.balances = [0.0] * num_nodes
+        # adj[u] speichert eine Liste von Kanten-Dictionaries
+        self.adj = [[] for _ in range(num_nodes)]
+
+    def add_node_balance(self, u: int, balance: float):
+        self.balances[u] = balance
+
+    def add_edge(self, u: int, v: int, cost: float, capacity: float):
+        # Vorwärtskante (Echte Kapazität, echte Kosten)
+        forward_edge = {'from': u, 'to': v, 'cost': cost, 'cap': capacity, 'flow': 0.0, 'rev': None}
+        # Rückwärtskante (0 Kapazität, negative Kosten für den Residualgraphen)
+        backward_edge = {'from': v, 'to': u, 'cost': -cost, 'cap': 0.0, 'flow': 0.0, 'rev': None}
+
+        forward_edge['rev'] = backward_edge
+        backward_edge['rev'] = forward_edge
+
+        self.adj[u].append(forward_edge)
+        self.adj[v].append(backward_edge)
+
+def load_mcf_graph(filepath: str) -> MinCostFlowGraph:
+    """Parst die speziellen Testdateien für kostenminimale Flüsse."""
+    with open(filepath, 'r') as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    n = int(lines[0])
+    graph = MinCostFlowGraph(n)
+
+    # Lese die Balancen (n Zeilen)
+    for i in range(n):
+        graph.add_node_balance(i, float(lines[i + 1]))
+
+    # Lese die Kanten (Restliche Zeilen: u v cost cap)
+    for line in lines[n + 1:]:
+        parts = line.split()
+        u = int(parts[0])
+        v = int(parts[1])
+        cost = float(parts[2])
+        cap = float(parts[3])
+        graph.add_edge(u, v, cost, cap)
+
+    return graph
 
 def load_graph_fast(filepath: str, graph_class, directed: bool = False, weighted: bool = True) -> Graph:
     

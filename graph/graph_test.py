@@ -6,8 +6,9 @@ from mst import *
 from tsp import *
 from sp import *
 from max_flow import *
+from min_flow import *
 
-def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_bfs: bool, run_mst: bool, run_tsp: bool, run_tsp_exact: bool, run_shortest_paths: bool, run_max_flow: bool):
+def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_bfs: bool, run_mst: bool, run_tsp: bool, run_tsp_exact: bool, run_shortest_paths: bool, run_max_flow: bool, run_mcf: bool = False) -> None:
     
     print(f"{'='*60}")
     print(f"{'GRAPHEN-PRAKTIKUM: BENCHMARKING':^60}")
@@ -23,20 +24,21 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
         # ---------------------------------------------------------
         # 0. EINLESEN
         # ---------------------------------------------------------
-        t_start = time.perf_counter()
-        graph = load_graph_fast(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
-        # graph = load_graph(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
-        t_end = time.perf_counter()
+        if not run_mcf:
+            t_start = time.perf_counter()
+            graph = load_graph_fast(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
+            # graph = load_graph(filepath, AdjacencyListGraph, directed=is_directed, weighted=is_weighted)
+            t_end = time.perf_counter()
 
-        if run_tsp_exact:
-            graph = load_graph_fast(filepath, AdjacencyMatrixGraph, directed=is_directed, weighted=is_weighted)
-        
-        # num_nodes = len(list(graph.get_nodes()))
-        num_nodes = graph.num_nodes
-        print(f"Einlesen abgeschlossen in {(t_end - t_start):.4f} s.")
-        print(f"-> Knotenanzahl: {num_nodes}")
+            if run_tsp_exact:
+                graph = load_graph_fast(filepath, AdjacencyMatrixGraph, directed=is_directed, weighted=is_weighted)
+            
+            # num_nodes = len(list(graph.get_nodes()))
+            num_nodes = graph.num_nodes
+            print(f"Einlesen abgeschlossen in {(t_end - t_start):.4f} s.")
+            print(f"-> Knotenanzahl: {num_nodes}")
 
-        is_connected = True # Standard-Annahme, falls BFS nicht ausgeführt wird
+            is_connected = True # Standard-Annahme, falls BFS nicht ausgeführt wird
 
         # ---------------------------------------------------------
         # 1. ZUSAMMENHANGSKOMPONENTEN (BFS)
@@ -212,6 +214,60 @@ def run_benchmarks(is_weighted: bool, is_directed: bool, test_files: list, run_b
 
         print("\n" + "-"*60 + "\n")
 
+        # ---------------------------------------------------------
+        # 6. Minimale FLÜSSE 
+        # ---------------------------------------------------------
+        if run_mcf:
+            # Deine interne Kontroll-Liste für MCF
+            # mcf_kontroll_tests = [
+            #     {"file": "Kostenminimal1.txt", "expected": "?"}, 
+            #     {"file": "Kostenminimal2.txt", "expected": "?"}, 
+            #     # Du kannst hier später die Dateien vom Prof mit den erwarteten Kosten eintragen
+            # ]
+
+            # current_filename = os.path.basename(filepath)
+            # tests_for_current_file = [t for t in mcf_kontroll_tests if t["file"] == current_filename]
+            
+            # # Fallback, falls die Datei getestet wird, aber nicht in der Liste steht
+            # if not tests_for_current_file:
+            #     tests_for_current_file = [{"file": current_filename, "expected": "Unbekannt"}]
+
+            # for test in tests_for_current_file:
+            #     expected = test["expected"]
+            #     print(f"-> MCF-Test: (Erwartete minimale Kosten: {expected})")
+
+                # MCF benötigt seinen eigenen Spezial-Parser! 
+                # Wir laden den Graphen zweimal, damit beide Algorithmen mit leeren Rohren anfangen.
+            try:
+                # mcf_graph = load_mcf_graph(filepath)
+                mcf_graph_cc = load_mcf_graph(filepath)
+                mcf_graph_ssp = load_mcf_graph(filepath) 
+            except Exception as e:
+                print(f"   [Fehler] Konnte MCF-Graph nicht parsen: {e}\n")
+                continue
+
+            # 1. Cycle-Canceling
+            try:
+                t_start = time.perf_counter()
+                cost_cc = cycle_canceling(mcf_graph_cc)
+                t_end = time.perf_counter()
+                
+                str_cc = f"{cost_cc:.5f}".rstrip('0').rstrip('.')
+                print(f"   [Cycle-Canceling] : Kosten = {str_cc:^10} | Zeit: {(t_end - t_start):.6f} s")
+            except Exception as e:
+                print(f"   [Cycle-Canceling] : Fehlgeschlagen ({e})")
+
+            # 2. Successive Shortest Path
+            try:
+                t_start = time.perf_counter()
+                cost_ssp = successive_shortest_path(mcf_graph_ssp)
+                t_end = time.perf_counter()
+                
+                str_ssp = f"{cost_ssp:.5f}".rstrip('0').rstrip('.')
+                print(f"   [Succ-Short-Path] : Kosten = {str_ssp:^10} | Zeit: {(t_end - t_start):.6f} s")
+            except Exception as e:
+                print(f"   [Succ-Short-Path] : Fehlgeschlagen ({e})")
+            print("")
 
 if __name__ == "__main__":
     
@@ -255,19 +311,29 @@ if __name__ == "__main__":
             "example/max_flow/Fluss.txt",
             "example/max_flow/Fluss2.txt",
             "example/sp/G_1_2.txt"
+        ],
+        "min_flow_tests": [
+            "example/min_flow/Kostenminimal1.txt",
+            "example/min_flow/Kostenminimal2.txt",
+            "example/min_flow/Kostenminimal3.txt",
+            "example/min_flow/Kostenminimal4.txt",
+            "example/min_flow/Kostenminimal_gross1.txt",
+            "example/min_flow/Kostenminimal_gross2.txt",
+            "example/min_flow/Kostenminimal_gross3.txt"
         ]
     }
     
     # Auswahl der Testdateien
-    AKTUELLER_TEST = FILE_SETS["sp_tests"]
+    AKTUELLER_TEST = FILE_SETS["min_flow_tests"]
 
     # Auswahl der Algorithmen
-    RUN_BFS = True
+    RUN_BFS = False
     RUN_MST = False
     RUN_TSP = False
     RUN_TSP_EXACT = False
-    RUN_SP = True 
+    RUN_SP = False 
     RUN_MAX_FLOW = False
+    RUN_MCF = True
 
     is_weighted = True
     is_directed=True
@@ -282,7 +348,8 @@ if __name__ == "__main__":
         run_tsp=RUN_TSP,
         run_tsp_exact=RUN_TSP_EXACT,
         run_shortest_paths=RUN_SP,
-        run_max_flow=RUN_MAX_FLOW
+        run_max_flow=RUN_MAX_FLOW,
+        run_mcf=RUN_MCF
     )
     t_end_test = time.perf_counter()
     print(f"Gesamtdauer aller Benchmarks: {(t_end_test - t_start_test):.4f} Sekunden")

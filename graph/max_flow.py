@@ -2,35 +2,28 @@ from collections import deque
 from typing import Tuple, List, Dict
 
 def edmonds_karp(graph, source: int, sink: int) -> float:
-    """
-    Berechnet den maximalen Fluss von der Quelle (source) zur Senke (sink)
-    mit dem Edmonds-Karp-Algorithmus.
-    Laufzeit: O(V * E^2)
-    """
     nodes = list(graph.get_nodes())
     
-    # 1. Residualgraphen aufbauen (Kapazitäten)
-    # capacity[u][v] speichert die aktuell noch verfügbare Restkapazität
+    # Residualgraphen aufbauen
     capacity = {u: {} for u in nodes}
-    # adj speichert die Nachbarn für die BFS (inklusive künstlicher Rückwärtskanten)
+    # adj speichert die Nachbarn für die BFS
     adj = {u: [] for u in nodes}
     
     for u in nodes:
         for v, cap in graph.get_neighbors(u):
-            # Vorwärtskante initialisieren
+            # Vorwärtskante
             capacity[u][v] = cap
             adj[u].append(v)
             
-            # Künstliche Rückwärtskante initialisieren (falls nicht im Originalgraphen)
+            # Künstliche Rückwärtskante
             if u not in capacity[v]:
                 capacity[v][u] = 0.0
                 adj[v].append(u)
 
     max_flow = 0.0
 
-    # 2. Schleife: Solange wir einen erweiternden Pfad finden, erhöhe den Fluss
     while True:
-        # BFS, um den kürzesten erweiternden Pfad zu finden
+        # BFS
         parent = {node: -1 for node in nodes}
         parent[source] = source
         
@@ -51,7 +44,7 @@ def edmonds_karp(graph, source: int, sink: int) -> float:
                         
                     queue.append(neighbor)
                     
-        # BFS erreicht die Senke nicht mehr, kein erweiternder Pfad mehr vorhanden
+        # BFS erreicht die Senke nicht mehr
         if not path_found:
             break
             
@@ -67,9 +60,7 @@ def edmonds_karp(graph, source: int, sink: int) -> float:
         current = sink
         while current != source:
             prev = parent[current]
-            # Vorwärtskante: Kapazität wird verbraucht 
             capacity[prev][current] -= path_flow
-            # Rückwärtskante: Virtuelle Kapazität entsteht
             capacity[current][prev] += path_flow
             current = prev
             
